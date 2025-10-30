@@ -403,8 +403,13 @@ const AdminDashboard = ({ user, onLogout }) => {
                               {emp.position}
                             </div>
                             {emp.role === "admin" && (
-                              <div className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full text-xs text-white font-semibold">
+                              <div className="px-3 py-1 bg-gradient-to-r from-red-500 to-red-600 rounded-full text-xs text-white font-semibold">
                                 ADMIN
+                              </div>
+                            )}
+                            {emp.role === "supervisor" && (
+                              <div className="px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full text-xs text-white font-semibold">
+                                SUPERVISOR
                               </div>
                             )}
                           </div>
