@@ -336,15 +336,37 @@ async def get_salary_report(admin: dict = Depends(get_admin_user)):
     report = []
     for user in users:
         user_entries = [e for e in entries if e.get("user_id") == user.get("id")]
-        total_hours = sum(e.get("hours", 0) for e in user_entries)
-        total_salary = total_hours * user.get("hourly_rate", 0)
+        
+        total_hours_regular = 0
+        total_hours_delegacja = 0
+        total_salary = 0
+        
+        for entry in user_entries:
+            hours = entry.get("hours", 0)
+            description = entry.get("description", "").lower()
+            
+            # Check if "delegacja" is in the description
+            if "delegacja" in description or "delegację" in description:
+                # Use delegacja rate
+                rate = user.get("hourly_rate_delegacja", user.get("hourly_rate", 0))
+                total_hours_delegacja += hours
+            else:
+                # Use regular rate
+                rate = user.get("hourly_rate", 0)
+                total_hours_regular += hours
+            
+            total_salary += hours * rate
+        
+        total_hours = total_hours_regular + total_hours_delegacja
         
         report.append(SalaryReport(
             user_id=user.get("id"),
             user_name=user.get("full_name"),
             position=user.get("position"),
             hourly_rate=user.get("hourly_rate"),
+            hourly_rate_delegacja=user.get("hourly_rate_delegacja", 0),
             total_hours=total_hours,
+            total_hours_delegacja=total_hours_delegacja,
             total_salary=total_salary
         ))
     
