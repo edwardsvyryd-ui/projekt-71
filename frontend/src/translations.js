@@ -72,6 +72,9 @@ export const translations = {
     // Currency
     currency: "PLN",
     perHour: "PLN/год",
+    delegacja: "відрядження",
+    regularHours: "Звичайні години",
+    delegacjaHours: "Години відрядження",
   },
   
   pl: {
