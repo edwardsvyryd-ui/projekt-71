@@ -58,6 +58,7 @@ class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     position: Optional[str] = None
     hourly_rate: Optional[float] = None
+    hourly_rate_delegacja: Optional[float] = None
     password: Optional[str] = None
 
 class UserLogin(BaseModel):
