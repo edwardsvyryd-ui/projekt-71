@@ -85,6 +85,7 @@ const AdminDashboard = ({ user, onLogout }) => {
         await axios.post(`${API}/auth/register`, {
           ...userFormData,
           hourly_rate: parseFloat(userFormData.hourly_rate),
+          hourly_rate_delegacja: parseFloat(userFormData.hourly_rate_delegacja || 0),
         }, axiosConfig);
         toast.success(t('employeeCreated'));
       }
