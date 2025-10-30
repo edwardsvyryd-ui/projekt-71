@@ -38,6 +38,19 @@ const Login = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #111827 0%, #1F2937 50%, #111827 100%)' }}>
+      <div className="absolute top-4 right-4 z-20">
+        <Button
+          onClick={toggleLanguage}
+          variant="outline"
+          size="sm"
+          className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white flex items-center gap-2"
+          data-testid="language-toggle"
+        >
+          <Languages className="w-4 h-4" />
+          {language === 'uk' ? 'PL' : 'UA'}
+        </Button>
+      </div>
+      
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-20 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl"></div>
@@ -50,10 +63,10 @@ const Login = ({ onLogin }) => {
           </div>
           <div>
             <CardTitle className="text-3xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              Облік робочих годин
+              {t('loginTitle')}
             </CardTitle>
             <CardDescription className="text-gray-400 mt-2">
-              Увійдіть до системи обліку часу
+              {t('loginSubtitle')}
             </CardDescription>
           </div>
         </CardHeader>
@@ -61,7 +74,7 @@ const Login = ({ onLogin }) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-300">
-                Email
+                {t('email')}
               </Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -79,7 +92,7 @@ const Login = ({ onLogin }) => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password" className="text-gray-300">
-                Пароль
+                {t('password')}
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -101,12 +114,12 @@ const Login = ({ onLogin }) => {
               disabled={loading}
               className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-6 shadow-lg shadow-emerald-500/30 transition-all hover:shadow-emerald-500/50 hover:scale-[1.02]"
             >
-              {loading ? "Завантаження..." : "Увійти"}
+              {loading ? t('loading') : t('loginButton')}
             </Button>
           </form>
           <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
             <p className="text-sm text-gray-400 text-center">
-              Адмін: admin@company.com / admin123
+              {t('adminCredentials')}
             </p>
           </div>
         </CardContent>
