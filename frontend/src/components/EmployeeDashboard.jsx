@@ -179,6 +179,11 @@ const EmployeeDashboard = ({ user, onLogout }) => {
             <CardHeader>
               <CardDescription className="text-gray-400">{t('hourlyRate')}</CardDescription>
               <CardTitle className="text-3xl text-white">{user.hourly_rate} {t('currency')}</CardTitle>
+              {user.hourly_rate_delegacja > 0 && (
+                <div className="text-sm text-emerald-400 mt-1">
+                  {t('delegacja')}: {user.hourly_rate_delegacja} {t('currency')}
+                </div>
+              )}
             </CardHeader>
           </Card>
           <Card className="bg-gradient-to-br from-emerald-900/20 to-gray-900 border-emerald-800/50">
