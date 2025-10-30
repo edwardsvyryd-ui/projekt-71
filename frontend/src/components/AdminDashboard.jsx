@@ -7,14 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, LogOut, Plus, Edit, Trash2, Users, DollarSign, Briefcase } from "lucide-react";
+import { Clock, LogOut, Plus, Edit, Trash2, Users, DollarSign, Briefcase, Languages } from "lucide-react";
 import { format } from "date-fns";
-import { uk } from "date-fns/locale";
+import { uk, pl } from "date-fns/locale";
+import { useLanguage } from "@/LanguageContext";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const AdminDashboard = ({ user, onLogout }) => {
+  const { t, language, toggleLanguage } = useLanguage();
   const [users, setUsers] = useState([]);
   const [entries, setEntries] = useState([]);
   const [salaryReport, setSalaryReport] = useState([]);
@@ -29,6 +31,8 @@ const AdminDashboard = ({ user, onLogout }) => {
     hourly_rate: "",
     role: "employee",
   });
+  
+  const dateLocale = language === 'uk' ? uk : pl;
 
   const token = localStorage.getItem("token");
 
@@ -54,7 +58,7 @@ const AdminDashboard = ({ user, onLogout }) => {
       setEntries(entriesRes.data.sort((a, b) => new Date(b.date) - new Date(a.date)));
       setSalaryReport(salaryRes.data);
     } catch (error) {
-      toast.error("Помилка завантаження даних");
+      toast.error(t('loadError'));
     } finally {
       setLoading(false);
     }
@@ -74,13 +78,13 @@ const AdminDashboard = ({ user, onLogout }) => {
           updateData.password = userFormData.password;
         }
         await axios.put(`${API}/users/${editingUser.id}`, updateData, axiosConfig);
-        toast.success("Користувача оновлено!");
+        toast.success(t('employeeUpdated'));
       } else {
         await axios.post(`${API}/auth/register`, {
           ...userFormData,
           hourly_rate: parseFloat(userFormData.hourly_rate),
         }, axiosConfig);
-        toast.success("Користувача створено!");
+        toast.success(t('employeeCreated'));
       }
 
       setIsUserDialogOpen(false);
@@ -95,7 +99,7 @@ const AdminDashboard = ({ user, onLogout }) => {
       });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Помилка збереження");
+      toast.error(error.response?.data?.detail || t('entryError'));
     }
   };
 
@@ -113,14 +117,14 @@ const AdminDashboard = ({ user, onLogout }) => {
   };
 
   const handleDeleteUser = async (id) => {
-    if (!window.confirm("Видалити цього користувача? Це також видалить всі його записи.")) return;
+    if (!window.confirm(t('deleteEmployeeConfirm'))) return;
 
     try {
       await axios.delete(`${API}/users/${id}`, axiosConfig);
-      toast.success("Користувача видалено");
+      toast.success(t('employeeDeleted'));
       fetchData();
     } catch (error) {
-      toast.error("Помилка видалення");
+      toast.error(t('deleteError'));
     }
   };
 
@@ -139,20 +143,32 @@ const AdminDashboard = ({ user, onLogout }) => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Панель адміністратора
+                {t('adminPanel')}
               </h1>
               <p className="text-sm text-gray-400">{user.full_name}</p>
             </div>
           </div>
-          <Button
-            data-testid="admin-logout-button"
-            onClick={onLogout}
-            variant="outline"
-            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Вийти
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={toggleLanguage}
+              variant="outline"
+              size="sm"
+              className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+              data-testid="language-toggle-admin"
+            >
+              <Languages className="w-4 h-4 mr-2" />
+              {language === 'uk' ? 'PL' : 'UA'}
+            </Button>
+            <Button
+              data-testid="admin-logout-button"
+              onClick={onLogout}
+              variant="outline"
+              className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              {t('logout')}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -163,7 +179,7 @@ const AdminDashboard = ({ user, onLogout }) => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardDescription className="text-gray-400">Працівників</CardDescription>
+                  <CardDescription className="text-gray-400">{t('totalEmployees')}</CardDescription>
                   <CardTitle className="text-3xl text-white" data-testid="total-employees">{totalEmployees}</CardTitle>
                 </div>
                 <Users className="w-12 h-12 text-emerald-500/30" />
@@ -174,7 +190,7 @@ const AdminDashboard = ({ user, onLogout }) => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardDescription className="text-gray-400">Всього годин</CardDescription>
+                  <CardDescription className="text-gray-400">{t('totalHours')}</CardDescription>
                   <CardTitle className="text-3xl text-white" data-testid="admin-total-hours">{totalHours.toFixed(2)}</CardTitle>
                 </div>
                 <Clock className="w-12 h-12 text-emerald-500/30" />
@@ -185,8 +201,8 @@ const AdminDashboard = ({ user, onLogout }) => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardDescription className="text-gray-400">Загальна зарплата</CardDescription>
-                  <CardTitle className="text-3xl text-emerald-400" data-testid="admin-total-salary">{totalSalary.toFixed(2)} грн</CardTitle>
+                  <CardDescription className="text-gray-400">{t('totalSalary')}</CardDescription>
+                  <CardTitle className="text-3xl text-emerald-400" data-testid="admin-total-salary">{totalSalary.toFixed(2)} {t('currency')}</CardTitle>
                 </div>
                 <DollarSign className="w-12 h-12 text-emerald-500/50" />
               </div>
@@ -198,13 +214,13 @@ const AdminDashboard = ({ user, onLogout }) => {
         <Tabs defaultValue="employees" className="space-y-6">
           <TabsList className="bg-gray-900/80 border border-gray-800">
             <TabsTrigger value="employees" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
-              Працівники
+              {t('employees')}
             </TabsTrigger>
             <TabsTrigger value="entries" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
-              Записи годин
+              {t('allTimeEntries')}
             </TabsTrigger>
             <TabsTrigger value="salary" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
-              Звіт по зарплаті
+              {t('salaryReport')}
             </TabsTrigger>
           </TabsList>
 
@@ -231,21 +247,21 @@ const AdminDashboard = ({ user, onLogout }) => {
                     className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg shadow-emerald-500/30"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Додати працівника
+                    {t('addEmployee')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-gray-900 border-gray-800 text-white">
                   <DialogHeader>
                     <DialogTitle className="text-xl" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                      {editingUser ? "Редагувати працівника" : "Додати працівника"}
+                      {editingUser ? t('editEmployeeTitle') : t('addEmployeeTitle')}
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                      Заповніть дані про працівника
+                      {t('employeeDescription')}
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleUserSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-gray-300">Email</Label>
+                      <Label htmlFor="email" className="text-gray-300">{t('email')}</Label>
                       <Input
                         id="email"
                         data-testid="user-email-input"
@@ -259,7 +275,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="password" className="text-gray-300">
-                        Пароль {editingUser && "(залиште порожнім, якщо не змінюєте)"}
+                        {editingUser ? t('passwordOptional') : t('password')}
                       </Label>
                       <Input
                         id="password"
@@ -272,7 +288,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="full_name" className="text-gray-300">Повне ім'я</Label>
+                      <Label htmlFor="full_name" className="text-gray-300">{t('fullName')}</Label>
                       <Input
                         id="full_name"
                         data-testid="user-fullname-input"
@@ -283,7 +299,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="position" className="text-gray-300">Посада</Label>
+                      <Label htmlFor="position" className="text-gray-300">{t('position')}</Label>
                       <Input
                         id="position"
                         data-testid="user-position-input"
@@ -294,7 +310,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="hourly_rate" className="text-gray-300">Годинна ставка (грн)</Label>
+                      <Label htmlFor="hourly_rate" className="text-gray-300">{t('hourlyRateInput')}</Label>
                       <Input
                         id="hourly_rate"
                         data-testid="user-hourly-rate-input"
@@ -312,7 +328,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                       type="submit"
                       className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
                     >
-                      {editingUser ? "Оновити" : "Створити"}
+                      {editingUser ? t('update') : t('create')}
                     </Button>
                   </form>
                 </DialogContent>
@@ -322,9 +338,9 @@ const AdminDashboard = ({ user, onLogout }) => {
             <Card className="bg-gray-900/80 border-gray-800">
               <CardContent className="pt-6">
                 {loading ? (
-                  <div className="text-center py-8 text-gray-400">Завантаження...</div>
+                  <div className="text-center py-8 text-gray-400">{t('loading')}</div>
                 ) : users.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">Немає працівників</div>
+                  <div className="text-center py-8 text-gray-400">{t('noEmployees')}</div>
                 ) : (
                   <div className="space-y-3">
                     {users.map((emp) => (
@@ -347,7 +363,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                             )}
                           </div>
                           <div className="text-sm text-gray-400 mt-1">
-                            {emp.email} • {emp.hourly_rate} грн/год
+                            {emp.email} • {emp.hourly_rate} {t('perHour')}
                           </div>
                         </div>
                         {emp.role !== "admin" && (
@@ -384,13 +400,13 @@ const AdminDashboard = ({ user, onLogout }) => {
           <TabsContent value="entries">
             <Card className="bg-gray-900/80 border-gray-800">
               <CardHeader>
-                <CardTitle className="text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Всі записи годин</CardTitle>
+                <CardTitle className="text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{t('allEntries')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
-                  <div className="text-center py-8 text-gray-400">Завантаження...</div>
+                  <div className="text-center py-8 text-gray-400">{t('loading')}</div>
                 ) : entries.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">Немає записів</div>
+                  <div className="text-center py-8 text-gray-400">{t('noEntries')}</div>
                 ) : (
                   <div className="space-y-3">
                     {entries.map((entry) => {
@@ -404,10 +420,10 @@ const AdminDashboard = ({ user, onLogout }) => {
                           <div className="flex-1">
                             <div className="flex items-center gap-3">
                               <div className="text-sm text-gray-400">
-                                {format(new Date(entry.date), "d MMMM yyyy", { locale: uk })}
+                                {format(new Date(entry.date), "d MMMM yyyy", { locale: dateLocale })}
                               </div>
                               <div className="text-lg font-semibold text-emerald-400">
-                                {entry.hours} год
+                                {entry.hours} {language === 'uk' ? 'год' : 'godz'}
                               </div>
                               <div className="text-sm text-gray-300">
                                 • {entryUser?.full_name}
@@ -430,13 +446,13 @@ const AdminDashboard = ({ user, onLogout }) => {
           <TabsContent value="salary">
             <Card className="bg-gray-900/80 border-gray-800">
               <CardHeader>
-                <CardTitle className="text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Звіт по зарплаті</CardTitle>
+                <CardTitle className="text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{t('salaryReport')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
-                  <div className="text-center py-8 text-gray-400">Завантаження...</div>
+                  <div className="text-center py-8 text-gray-400">{t('loading')}</div>
                 ) : salaryReport.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">Немає даних</div>
+                  <div className="text-center py-8 text-gray-400">{t('noEntries')}</div>
                 ) : (
                   <div className="space-y-3">
                     {salaryReport.map((report) => (
@@ -454,11 +470,11 @@ const AdminDashboard = ({ user, onLogout }) => {
                             </div>
                           </div>
                           <div className="text-sm text-gray-400 mt-1">
-                            {report.total_hours.toFixed(2)} год × {report.hourly_rate} грн/год
+                            {report.total_hours.toFixed(2)} {language === 'uk' ? 'год' : 'godz'} × {report.hourly_rate} {t('perHour')}
                           </div>
                         </div>
                         <div className="text-2xl font-bold text-emerald-400">
-                          {report.total_salary.toFixed(2)} грн
+                          {report.total_salary.toFixed(2)} {t('currency')}
                         </div>
                       </div>
                     ))}
