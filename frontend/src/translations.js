@@ -125,6 +125,7 @@ export const translations = {
     fullName: "Imię i nazwisko",
     position: "Stanowisko",
     hourlyRateInput: "Stawka godzinowa (PLN)",
+    hourlyRateDelegacja: "Stawka dla delegacji (PLN)",
     passwordOptional: "Hasło (pozostaw puste, jeśli nie zmieniasz)",
     deleteEmployeeConfirm: "Usunąć tego użytkownika? Spowoduje to również usunięcie wszystkich jego wpisów.",
     noEmployees: "Brak pracowników",
