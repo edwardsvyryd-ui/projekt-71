@@ -16,6 +16,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const EmployeeDashboard = ({ user, onLogout }) => {
+  const { t, language, toggleLanguage } = useLanguage();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -25,6 +26,8 @@ const EmployeeDashboard = ({ user, onLogout }) => {
     hours: "",
     description: "",
   });
+  
+  const dateLocale = language === 'uk' ? uk : pl;
 
   const token = localStorage.getItem("token");
 
