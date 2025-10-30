@@ -276,7 +276,7 @@ async def create_time_entry(entry_data: TimeEntryCreate, current_user: dict = De
 @api_router.get("/time-entries", response_model=List[TimeEntry])
 async def get_time_entries(current_user: dict = Depends(get_current_user)):
     # Admin can see all entries, employees only see their own
-    query = {} if current_user.get("role") == "admin" else {"user_id": current_user["id"]}
+    query = {} if current_user.get("role") in ["admin", "supervisor"] else {"user_id": current_user["id"]}
     
     entries = await db.time_entries.find(query, {"_id": 0}).to_list(10000)
     
@@ -287,6 +287,48 @@ async def get_time_entries(current_user: dict = Depends(get_current_user)):
             entry['updated_at'] = datetime.fromisoformat(entry['updated_at'])
     
     return entries
+
+@api_router.get("/time-entries/with-calculations", response_model=List[TimeEntryWithRate])
+async def get_time_entries_with_calculations(current_user: dict = Depends(get_current_user)):
+    # Get time entries
+    query = {} if current_user.get("role") in ["admin", "supervisor"] else {"user_id": current_user["id"]}
+    entries = await db.time_entries.find(query, {"_id": 0}).to_list(10000)
+    
+    # Get all users for rate lookup
+    users = await db.users.find({}, {"_id": 0}).to_list(1000)
+    user_map = {u["id"]: u for u in users}
+    
+    result = []
+    for entry in entries:
+        user = user_map.get(entry["user_id"])
+        if not user:
+            continue
+        
+        hours = entry.get("hours", 0)
+        description = entry.get("description", "").lower()
+        
+        # Check if "delegacja" is in the description
+        is_delegacja = "delegacja" in description or "delegację" in description
+        
+        if is_delegacja:
+            applied_rate = user.get("hourly_rate_delegacja", user.get("hourly_rate", 0))
+        else:
+            applied_rate = user.get("hourly_rate", 0)
+        
+        calculated_salary = hours * applied_rate
+        
+        result.append(TimeEntryWithRate(
+            id=entry["id"],
+            user_id=entry["user_id"],
+            date=entry["date"],
+            hours=hours,
+            description=entry.get("description"),
+            is_delegacja=is_delegacja,
+            applied_rate=applied_rate,
+            calculated_salary=calculated_salary
+        ))
+    
+    return result
 
 @api_router.put("/time-entries/{entry_id}", response_model=TimeEntry)
 async def update_time_entry(entry_id: str, entry_data: TimeEntryUpdate, current_user: dict = Depends(get_current_user)):
