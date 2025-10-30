@@ -115,6 +115,7 @@ const AdminDashboard = ({ user, onLogout }) => {
       full_name: user.full_name,
       position: user.position,
       hourly_rate: user.hourly_rate.toString(),
+      hourly_rate_delegacja: (user.hourly_rate_delegacja || 0).toString(),
       role: user.role,
     });
     setIsUserDialogOpen(true);
