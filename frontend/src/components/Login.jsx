@@ -27,10 +27,10 @@ const Login = ({ onLogin }) => {
         password,
       });
 
-      toast.success("Успішний вхід!");
+      toast.success(t('loginSuccess'));
       onLogin(response.data.user, response.data.access_token);
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Помилка входу");
+      toast.error(error.response?.data?.detail || t('loginError'));
     } finally {
       setLoading(false);
     }
