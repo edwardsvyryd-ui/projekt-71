@@ -383,6 +383,11 @@ const AdminDashboard = ({ user, onLogout }) => {
                           </div>
                           <div className="text-sm text-gray-400 mt-1">
                             {emp.email} • {emp.hourly_rate} {t('perHour')}
+                            {emp.hourly_rate_delegacja > 0 && (
+                              <span className="ml-2 text-emerald-400">
+                                • {emp.hourly_rate_delegacja} {t('perHour')} ({t('delegacja')})
+                              </span>
+                            )}
                           </div>
                         </div>
                         {emp.role !== "admin" && (
