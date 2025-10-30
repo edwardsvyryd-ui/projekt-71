@@ -51,6 +51,7 @@ class UserCreate(BaseModel):
     full_name: str
     position: str
     hourly_rate: float
+    hourly_rate_delegacja: float = 0.0
     role: str = "employee"  # employee, supervisor, admin
 
 class UserUpdate(BaseModel):
