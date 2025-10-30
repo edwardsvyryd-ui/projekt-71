@@ -284,7 +284,14 @@ const EmployeeDashboard = ({ user, onLogout }) => {
               <div className="text-center py-8 text-gray-400">{t('noEntries')}</div>
             ) : (
               <div className="space-y-3">
-                {entries.map((entry) => (
+                {entries.map((entry) => {
+                  const isDelegacja = (entry.description || "").toLowerCase().includes("delegacja") || 
+                                     (entry.description || "").toLowerCase().includes("delegację");
+                  const appliedRate = isDelegacja && user.hourly_rate_delegacja > 0
+                    ? user.hourly_rate_delegacja
+                    : user.hourly_rate;
+                  
+                  return (
                   <div
                     key={entry.id}
                     data-testid={`entry-${entry.id}`}
@@ -297,6 +304,14 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                         </div>
                         <div className="text-lg font-semibold text-emerald-400">
                           {entry.hours} {language === 'uk' ? 'год' : 'godz'}
+                        </div>
+                        {isDelegacja && (
+                          <div className="px-2 py-1 bg-emerald-900/30 border border-emerald-700/50 rounded text-xs text-emerald-400">
+                            {t('delegacja')}
+                          </div>
+                        )}
+                        <div className="text-sm text-gray-500">
+                          {appliedRate} {t('currency')}
                         </div>
                       </div>
                       {entry.description && (
