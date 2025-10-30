@@ -134,6 +134,10 @@ async def get_admin_user(current_user: dict = Depends(get_current_user)) -> dict
 # Auth routes
 @api_router.post("/auth/register", response_model=User)
 async def register(user_data: UserCreate, admin: dict = Depends(get_admin_user)):
+    # Only main admin can create other admins or supervisors
+    if user_data.role in ["admin", "supervisor"] and admin.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Only main admin can create admin or supervisor accounts")
+    
     # Check if user already exists
     existing_user = await db.users.find_one({"email": user_data.email}, {"_id": 0})
     if existing_user:
