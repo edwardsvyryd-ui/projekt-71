@@ -317,6 +317,31 @@ const AdminDashboard = ({ user, onLogout }) => {
                       />
                     </div>
                     <div className="space-y-2">
+                      <Label htmlFor="role" className="text-gray-300">{t('role')}</Label>
+                      <Select
+                        value={userFormData.role}
+                        onValueChange={(value) => setUserFormData({ ...userFormData, role: value })}
+                      >
+                        <SelectTrigger 
+                          data-testid="user-role-select"
+                          className="bg-gray-800 border-gray-700 text-white"
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-800 border-gray-700">
+                          <SelectItem value="employee" className="text-white hover:bg-gray-700">
+                            {t('roleEmployee')}
+                          </SelectItem>
+                          <SelectItem value="supervisor" className="text-white hover:bg-gray-700">
+                            {t('roleSupervisor')}
+                          </SelectItem>
+                          <SelectItem value="admin" className="text-white hover:bg-gray-700">
+                            {t('roleAdmin')}
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
                       <Label htmlFor="hourly_rate" className="text-gray-300">{t('hourlyRateInput')}</Label>
                       <Input
                         id="hourly_rate"
