@@ -339,7 +339,7 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                       </Button>
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             )}
           </CardContent>
