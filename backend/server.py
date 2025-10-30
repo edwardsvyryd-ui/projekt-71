@@ -226,6 +226,15 @@ async def update_user(user_id: str, user_data: UserUpdate, admin: dict = Depends
 
 @api_router.delete("/users/{user_id}")
 async def delete_user(user_id: str, admin: dict = Depends(get_admin_user)):
+    # Get user to delete
+    user_to_delete = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user_to_delete:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Only main admin can delete other admins or supervisors
+    if user_to_delete.get("role") in ["admin", "supervisor"] and admin.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Only main admin can delete admin or supervisor accounts")
+    
     result = await db.users.delete_one({"id": user_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="User not found")
