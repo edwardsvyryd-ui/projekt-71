@@ -52,7 +52,29 @@ const EmployeeDashboard = ({ user, onLogout }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const calculateSalary = () => {
+    let totalHours = 0;
+    let totalSalary = 0;
+
+    entries.forEach(entry => {
+      const hours = entry.hours;
+      const description = (entry.description || "").toLowerCase();
+      
+      // Check if "delegacja" is in the description
+      const isDelegacja = description.includes("delegacja") || description.includes("delegację");
+      
+      const rate = isDelegacja && user.hourly_rate_delegacja > 0
+        ? user.hourly_rate_delegacja
+        : user.hourly_rate;
+      
+      totalHours += hours;
+      totalSalary += hours * rate;
+    });
+
+    return { totalHours, totalSalary };
+  };
+
+  const { totalHours, totalSalary } = calculateSalary();
     e.preventDefault();
 
     try {
