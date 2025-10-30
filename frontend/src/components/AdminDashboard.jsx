@@ -74,6 +74,7 @@ const AdminDashboard = ({ user, onLogout }) => {
           full_name: userFormData.full_name,
           position: userFormData.position,
           hourly_rate: parseFloat(userFormData.hourly_rate),
+          hourly_rate_delegacja: parseFloat(userFormData.hourly_rate_delegacja || 0),
         };
         if (userFormData.password) {
           updateData.password = userFormData.password;
