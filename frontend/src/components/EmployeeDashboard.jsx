@@ -46,7 +46,7 @@ const EmployeeDashboard = ({ user, onLogout }) => {
       const response = await axios.get(`${API}/time-entries`, axiosConfig);
       setEntries(response.data.sort((a, b) => new Date(b.date) - new Date(a.date)));
     } catch (error) {
-      toast.error("Помилка завантаження записів");
+      toast.error(t('loadError'));
     } finally {
       setLoading(false);
     }
@@ -58,10 +58,10 @@ const EmployeeDashboard = ({ user, onLogout }) => {
     try {
       if (editingEntry) {
         await axios.put(`${API}/time-entries/${editingEntry.id}`, formData, axiosConfig);
-        toast.success("Запис оновлено!");
+        toast.success(t('entryUpdated'));
       } else {
         await axios.post(`${API}/time-entries`, formData, axiosConfig);
-        toast.success("Запис додано!");
+        toast.success(t('entryAdded'));
       }
 
       setIsDialogOpen(false);
@@ -73,7 +73,7 @@ const EmployeeDashboard = ({ user, onLogout }) => {
       });
       fetchEntries();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Помилка збереження");
+      toast.error(error.response?.data?.detail || t('entryError'));
     }
   };
 
@@ -88,14 +88,14 @@ const EmployeeDashboard = ({ user, onLogout }) => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Видалити цей запис?")) return;
+    if (!window.confirm(t('deleteEntryConfirm'))) return;
 
     try {
       await axios.delete(`${API}/time-entries/${id}`, axiosConfig);
-      toast.success("Запис видалено");
+      toast.success(t('entryDeleted'));
       fetchEntries();
     } catch (error) {
-      toast.error("Помилка видалення");
+      toast.error(t('deleteError'));
     }
   };
 
@@ -121,15 +121,27 @@ const EmployeeDashboard = ({ user, onLogout }) => {
               </div>
             </div>
           </div>
-          <Button
-            data-testid="logout-button"
-            onClick={onLogout}
-            variant="outline"
-            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Вийти
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={toggleLanguage}
+              variant="outline"
+              size="sm"
+              className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+              data-testid="language-toggle-employee"
+            >
+              <Languages className="w-4 h-4 mr-2" />
+              {language === 'uk' ? 'PL' : 'UA'}
+            </Button>
+            <Button
+              data-testid="logout-button"
+              onClick={onLogout}
+              variant="outline"
+              className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              {t('logout')}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -138,20 +150,20 @@ const EmployeeDashboard = ({ user, onLogout }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
             <CardHeader>
-              <CardDescription className="text-gray-400">Всього годин</CardDescription>
+              <CardDescription className="text-gray-400">{t('totalHours')}</CardDescription>
               <CardTitle className="text-3xl text-emerald-400" data-testid="total-hours">{totalHours.toFixed(2)}</CardTitle>
             </CardHeader>
           </Card>
           <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
             <CardHeader>
-              <CardDescription className="text-gray-400">Годинна ставка</CardDescription>
-              <CardTitle className="text-3xl text-white">{user.hourly_rate} грн</CardTitle>
+              <CardDescription className="text-gray-400">{t('hourlyRate')}</CardDescription>
+              <CardTitle className="text-3xl text-white">{user.hourly_rate} {t('currency')}</CardTitle>
             </CardHeader>
           </Card>
           <Card className="bg-gradient-to-br from-emerald-900/20 to-gray-900 border-emerald-800/50">
             <CardHeader>
-              <CardDescription className="text-gray-400">Всього до виплати</CardDescription>
-              <CardTitle className="text-3xl text-emerald-400" data-testid="total-salary">{totalSalary.toFixed(2)} грн</CardTitle>
+              <CardDescription className="text-gray-400">{t('totalSalary')}</CardDescription>
+              <CardTitle className="text-3xl text-emerald-400" data-testid="total-salary">{totalSalary.toFixed(2)} {t('currency')}</CardTitle>
             </CardHeader>
           </Card>
         </div>
@@ -175,21 +187,21 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                 className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg shadow-emerald-500/30"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Додати запис
+                {t('addEntry')}
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-gray-900 border-gray-800 text-white">
               <DialogHeader>
                 <DialogTitle className="text-xl" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                  {editingEntry ? "Редагувати запис" : "Додати запис"}
+                  {editingEntry ? t('editEntryTitle') : t('addEntryTitle')}
                 </DialogTitle>
                 <DialogDescription className="text-gray-400">
-                  Заповніть дані про відпрацьовані години
+                  {t('entryDescription')}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="date" className="text-gray-300">Дата</Label>
+                  <Label htmlFor="date" className="text-gray-300">{t('date')}</Label>
                   <Input
                     id="date"
                     data-testid="entry-date-input"
@@ -202,7 +214,7 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="hours" className="text-gray-300">Години</Label>
+                  <Label htmlFor="hours" className="text-gray-300">{t('hours')}</Label>
                   <Input
                     id="hours"
                     data-testid="entry-hours-input"
@@ -217,7 +229,7 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description" className="text-gray-300">Опис (необов'язково)</Label>
+                  <Label htmlFor="description" className="text-gray-300">{t('description')}</Label>
                   <Textarea
                     id="description"
                     data-testid="entry-description-input"
@@ -232,7 +244,7 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                   type="submit"
                   className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
                 >
-                  {editingEntry ? "Оновити" : "Зберегти"}
+                  {editingEntry ? t('update') : t('save')}
                 </Button>
               </form>
             </DialogContent>
@@ -242,13 +254,13 @@ const EmployeeDashboard = ({ user, onLogout }) => {
         {/* Entries List */}
         <Card className="bg-gray-900/80 border-gray-800">
           <CardHeader>
-            <CardTitle className="text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Мої записи</CardTitle>
+            <CardTitle className="text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{t('myEntries')}</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="text-center py-8 text-gray-400">Завантаження...</div>
+              <div className="text-center py-8 text-gray-400">{t('loading')}</div>
             ) : entries.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">Немає записів</div>
+              <div className="text-center py-8 text-gray-400">{t('noEntries')}</div>
             ) : (
               <div className="space-y-3">
                 {entries.map((entry) => (
@@ -260,10 +272,10 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
                         <div className="text-sm text-gray-400">
-                          {format(new Date(entry.date), "d MMMM yyyy", { locale: uk })}
+                          {format(new Date(entry.date), "d MMMM yyyy", { locale: dateLocale })}
                         </div>
                         <div className="text-lg font-semibold text-emerald-400">
-                          {entry.hours} год
+                          {entry.hours} {language === 'uk' ? 'год' : 'godz'}
                         </div>
                       </div>
                       {entry.description && (
