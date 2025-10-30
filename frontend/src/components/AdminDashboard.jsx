@@ -11,6 +11,7 @@ import { Clock, LogOut, Plus, Edit, Trash2, Users, DollarSign, Briefcase, Langua
 import { format } from "date-fns";
 import { uk, pl } from "date-fns/locale";
 import { useLanguage } from "@/LanguageContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
