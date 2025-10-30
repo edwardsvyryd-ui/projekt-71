@@ -41,6 +41,7 @@ class User(BaseModel):
     full_name: str
     position: str
     hourly_rate: float
+    hourly_rate_delegacja: float = 0.0  # Rate for delegacja (business trip)
     role: str = "employee"  # admin or employee
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
