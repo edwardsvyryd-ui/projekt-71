@@ -328,6 +328,20 @@ const AdminDashboard = ({ user, onLogout }) => {
                         className="bg-gray-800 border-gray-700 text-white"
                       />
                     </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="hourly_rate_delegacja" className="text-gray-300">{t('hourlyRateDelegacja')}</Label>
+                      <Input
+                        id="hourly_rate_delegacja"
+                        data-testid="user-hourly-rate-delegacja-input"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={userFormData.hourly_rate_delegacja}
+                        onChange={(e) => setUserFormData({ ...userFormData, hourly_rate_delegacja: e.target.value })}
+                        className="bg-gray-800 border-gray-700 text-white"
+                        placeholder="0"
+                      />
+                    </div>
                     <Button
                       data-testid="save-employee-button"
                       type="submit"
