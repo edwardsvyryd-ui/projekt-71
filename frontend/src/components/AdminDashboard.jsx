@@ -494,7 +494,19 @@ const AdminDashboard = ({ user, onLogout }) => {
                             </div>
                           </div>
                           <div className="text-sm text-gray-400 mt-1">
-                            {report.total_hours.toFixed(2)} {language === 'uk' ? 'год' : 'godz'} × {report.hourly_rate} {t('perHour')}
+                            {report.total_hours.toFixed(2)} {language === 'uk' ? 'год' : 'godz'}
+                            {report.total_hours_delegacja > 0 && (
+                              <span className="text-emerald-400">
+                                {' '}({report.total_hours_delegacja.toFixed(2)} {t('delegacja')})
+                              </span>
+                            )}
+                            {' × '}
+                            {report.hourly_rate} {t('perHour')}
+                            {report.hourly_rate_delegacja > 0 && (
+                              <span className="text-emerald-400">
+                                {' / '}{report.hourly_rate_delegacja} {t('perHour')}
+                              </span>
+                            )}
                           </div>
                         </div>
                         <div className="text-2xl font-bold text-emerald-400">
