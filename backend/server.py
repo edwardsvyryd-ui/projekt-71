@@ -50,7 +50,7 @@ class UserCreate(BaseModel):
     full_name: str
     position: str
     hourly_rate: float
-    role: str = "employee"
+    role: str = "employee"  # employee, supervisor, admin
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
