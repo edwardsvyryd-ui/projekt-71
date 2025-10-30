@@ -35,7 +35,7 @@ function App() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-emerald-400 text-xl">Завантаження...</div>
+        <div className="text-emerald-400 text-xl">Loading...</div>
       </div>
     );
   }
