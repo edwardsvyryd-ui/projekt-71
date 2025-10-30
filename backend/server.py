@@ -95,8 +95,20 @@ class SalaryReport(BaseModel):
     user_name: str
     position: str
     hourly_rate: float
+    hourly_rate_delegacja: float
     total_hours: float
+    total_hours_delegacja: float
     total_salary: float
+
+class TimeEntryWithRate(BaseModel):
+    id: str
+    user_id: str
+    date: str
+    hours: float
+    description: Optional[str] = None
+    is_delegacja: bool
+    applied_rate: float
+    calculated_salary: float
 
 # Helper functions
 def hash_password(password: str) -> str:
