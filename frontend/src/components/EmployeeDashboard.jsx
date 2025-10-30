@@ -75,6 +75,8 @@ const EmployeeDashboard = ({ user, onLogout }) => {
   };
 
   const { totalHours, totalSalary } = calculateSalary();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
