@@ -242,6 +242,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                     full_name: "",
                     position: "",
                     hourly_rate: "",
+                    hourly_rate_delegacja: "",
                     role: "employee",
                   });
                 }
