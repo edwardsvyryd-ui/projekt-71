@@ -150,6 +150,9 @@ export const translations = {
     // Currency
     currency: "PLN",
     perHour: "PLN/godz",
+    delegacja: "delegacja",
+    regularHours: "Zwykłe godziny",
+    delegacjaHours: "Godziny delegacji",
   }
 };
 
