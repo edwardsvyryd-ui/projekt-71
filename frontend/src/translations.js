@@ -50,6 +50,7 @@ export const translations = {
     fullName: "Повне ім'я",
     position: "Посада",
     hourlyRateInput: "Годинна ставка (PLN)",
+    hourlyRateDelegacja: "Ставка для відрядження (PLN)",
     passwordOptional: "Пароль (залиште порожнім, якщо не змінюєте)",
     deleteEmployeeConfirm: "Видалити цього користувача? Це також видалить всі його записи.",
     noEmployees: "Немає працівників",
